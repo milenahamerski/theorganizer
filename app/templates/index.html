@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Minha Estante de Livros</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <h1>Minha Estante de Livros</h1>
+
+    <div id="book-list"></div>
+
+    <h2>Adicionar Livro</h2>
+    <form id="book-form">
+      <input type="text" id="title" placeholder="Título" required />
+      <input type="text" id="author" placeholder="Autor" required />
+      <input type="number" id="year" placeholder="Ano" />
+      <input type="text" id="image_url" placeholder="URL da imagem" />
+      <button type="submit">Adicionar</button>
+    </form>
+
+    <script src="/static/script.js"></script>
+  </body>
+</html>
