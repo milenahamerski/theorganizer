@@ -49,11 +49,25 @@ resource "openstack_compute_secgroup_v2" "secgroup_1" {
 # VM Única para tudo (App + DB via Docker Compose)
 resource "openstack_compute_instance_v2" "stack_instance" {
   name            = "theorganizer_stack"
-  image_id        = "45658166-3f45-47ef-9d1c-8d8cb4658a91" # Usando o ID para não ter erro de busca
-  flavor_name     = "m1.small"                   # Flavor m1.small para aguentar o Ubuntu + Docker
+  image_id        = "45658166-3f45-47ef-9d1c-8d8cb4658a91"
+  flavor_name     = "m1.small"
   security_groups = ["${openstack_compute_secgroup_v2.secgroup_1.name}"]
 
   network {
     name = openstack_networking_network_v2.network_1.name
   }
+
+  # Automação Total: Instala Docker, Clona o Repo e Sobe o App
+  user_data = <<-EOF
+    #!/bin/bash
+    apt-get update
+    apt-get install -y docker.io docker-compose git
+    systemctl start docker
+    systemctl enable docker
+    
+    cd /home/ubuntu
+    git clone https://github.com/milenahamerski/theorganizer.git
+    cd theorganizer
+    docker-compose up -d
+  EOF
 }
