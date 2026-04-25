@@ -70,4 +70,14 @@ resource "openstack_compute_instance_v2" "stack_instance" {
     cd theorganizer
     docker-compose up -d
   EOF
+
+  # Automação no seu PC: Atualiza o /etc/hosts automaticamente
+  provisioner "local-exec" {
+    command = "echo '${self.access_ip_v4} theorganizer.com' | sudo tee -a /etc/hosts"
+  }
+}
+
+# Output para ver o IP fácil no terminal
+output "vm_ip" {
+  value = openstack_compute_instance_v2.stack_instance.access_ip_v4
 }
