@@ -2,22 +2,35 @@
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
-    <title>Minha Estante de Livros</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TheOrganizer - Sua Estante Pessoal ✨</title>
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <h1>Minha Estante de Livros</h1>
+    <header>
+      <img src="/static/logo.png" alt="TheOrganizer Logo" />
+      <h1>TheOrganizer</h1>
+    </header>
 
-    <div id="book-list"></div>
+    <main class="main-container">
+      <section class="section-card">
+        <h2>Adicionar à minha estante</h2>
+        <form id="book-form">
+          <input type="text" id="title" placeholder="Título do livro" required />
+          <input type="text" id="author" placeholder="Nome da autora" required />
+          <input type="number" id="year" placeholder="Ano de lançamento" />
+          <input type="text" id="image_url" placeholder="URL da capa do livro" />
+          <button type="submit">Guardar com carinho ✨</button>
+        </form>
+      </section>
 
-    <h2>Adicionar Livro</h2>
-    <form id="book-form">
-      <input type="text" id="title" placeholder="Título" required />
-      <input type="text" id="author" placeholder="Autor" required />
-      <input type="number" id="year" placeholder="Ano" />
-      <input type="text" id="image_url" placeholder="URL da imagem" />
-      <button type="submit">Adicionar</button>
-    </form>
+      <section class="section-card">
+        <h2>Meus Tesouros</h2>
+        <div id="book-list">
+          <!-- Livros serão carregados aqui -->
+        </div>
+      </section>
+    </main>
 
     <script src="/static/script.js"></script>
   </body>

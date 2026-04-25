@@ -12,12 +12,14 @@ async function fetchBooks() {
             ${
               book.image_url
                 ? `<img src="${book.image_url}" alt="${book.title}">`
-                : ""
+                : '<div style="height:180px; background:#f0f0f0; display:flex; align-items:center; justify-content:center; color:#ccc;">📖</div>'
             }
-            <strong>${book.title}</strong> - ${book.author} (${
-      book.year || "Ano N/D"
-    })
-            <button onclick="deleteBook(${book.id})">Excluir</button>
+            <div class="book-card-content">
+              <h3>${book.title}</h3>
+              <p><strong>Autora:</strong> ${book.author}</p>
+              <p><strong>Ano:</strong> ${book.year || "N/D"}</p>
+              <button class="delete-btn" onclick="deleteBook(${book.id})">Excluir 🗑️</button>
+            </div>
         `;
     container.appendChild(div);
   });
