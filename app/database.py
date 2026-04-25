@@ -1,11 +1,13 @@
 import mysql.connector
 from mysql.connector import Error
 
+import os
+
 DB_CONFIG = {
-    "host": "localhost",
-    "user": "root",
-    "password": "senha3099",
-    "database": "bookdb"
+    "host": os.getenv("DB_HOST", "localhost"),
+    "user": os.getenv("DB_USER", "root"),
+    "password": os.getenv("DB_PASSWORD", "senha3099"),
+    "database": os.getenv("DB_NAME", "bookdb")
 }
 
 
@@ -23,7 +25,7 @@ def init_db():
             password=DB_CONFIG["password"]
         )
         cur = conn.cursor()
-        cur.execute("CREATE DATABASE IF NOT EXISTS bookdb")
+        cur.execute(f"CREATE DATABASE IF NOT EXISTS {DB_CONFIG['database']}")
         cur.close()
         conn.close()
 
