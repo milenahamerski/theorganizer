@@ -49,8 +49,8 @@ resource "openstack_compute_secgroup_v2" "secgroup_1" {
 # VM Única para tudo (App + DB via Docker Compose)
 resource "openstack_compute_instance_v2" "stack_instance" {
   name            = "theorganizer_stack"
-  image_name      = "cirros" # Troque pelo nome da imagem disponível no seu Horizon
-  flavor_name     = "m1.tiny" # Troque pelo flavor disponível
+  image_name      = "jammy-server-cloudimg-arm64" # Nome da imagem correto do seu Horizon
+  flavor_name     = "m1.small"                   # Flavor m1.small para aguentar o Ubuntu + Docker
   security_groups = ["${openstack_compute_secgroup_v2.secgroup_1.name}"]
 
   network {
