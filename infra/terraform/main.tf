@@ -1,3 +1,8 @@
+# Busca a rede pública automaticamente pelo nome
+data "openstack_networking_network_v2" "public" {
+  name = "public"
+}
+
 # Definição da Rede
 resource "openstack_networking_network_v2" "network_1" {
   name           = "theorganizer_net"
@@ -12,14 +17,14 @@ resource "openstack_networking_subnet_v2" "subnet_1" {
   ip_version = 4
 }
 
-# Configuração do Roteador (Essencial para o Ping/Acesso)
+# Configuração do Roteador
 resource "openstack_networking_router_v2" "router_1" {
   name                = "theorganizer_router"
   admin_state_up      = true
-  external_network_id = "public" # Nome padrão no DevStack para a rede externa
+  external_network_id = data.openstack_networking_network_v2.public.id # Agora usando o ID real
 }
 
-# Interface do Roteador ligando a Sub-rede à Rede Externa
+# Interface do Roteador
 resource "openstack_networking_router_interface_v2" "router_interface_1" {
   router_id = openstack_networking_router_v2.router_1.id
   subnet_id = openstack_networking_subnet_v2.subnet_1.id
@@ -59,10 +64,10 @@ resource "openstack_compute_secgroup_v2" "secgroup_1" {
   }
 }
 
-# VM Única para tudo (App + DB via Docker Compose)
+# VM Única para tudo
 resource "openstack_compute_instance_v2" "stack_instance" {
   name            = "theorganizer_stack"
-  image_id        = "25936459-8469-4eba-9f39-144ce8013807" # Imagem AMD64 correta!
+  image_id        = "25936459-8469-4eba-9f39-144ce8013807"
   flavor_name     = "m1.small"
   security_groups = ["${openstack_compute_secgroup_v2.secgroup_1.name}"]
 
@@ -70,7 +75,6 @@ resource "openstack_compute_instance_v2" "stack_instance" {
     name = openstack_networking_network_v2.network_1.name
   }
 
-  # Automação Total: Instala Docker, Clona o Repo e Sobe o App
   user_data = <<-EOF
     #!/bin/bash
     apt-get update
@@ -84,13 +88,11 @@ resource "openstack_compute_instance_v2" "stack_instance" {
     docker-compose up -d
   EOF
 
-  # Automação no seu PC: Atualiza o /etc/hosts automaticamente
   provisioner "local-exec" {
     command = "echo '${self.access_ip_v4} theorganizer.com' | sudo tee -a /etc/hosts"
   }
 }
 
-# Output para ver o IP fácil no terminal
 output "vm_ip" {
   value = openstack_compute_instance_v2.stack_instance.access_ip_v4
 }
