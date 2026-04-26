@@ -12,6 +12,19 @@ resource "openstack_networking_subnet_v2" "subnet_1" {
   ip_version = 4
 }
 
+# Configuração do Roteador (Essencial para o Ping/Acesso)
+resource "openstack_networking_router_v2" "router_1" {
+  name                = "theorganizer_router"
+  admin_state_up      = true
+  external_network_id = "public" # Nome padrão no DevStack para a rede externa
+}
+
+# Interface do Roteador ligando a Sub-rede à Rede Externa
+resource "openstack_networking_router_interface_v2" "router_interface_1" {
+  router_id = openstack_networking_router_v2.router_1.id
+  subnet_id = openstack_networking_subnet_v2.subnet_1.id
+}
+
 # Definição do Grupo de Segurança
 resource "openstack_compute_secgroup_v2" "secgroup_1" {
   name        = "theorganizer_sg"
@@ -49,7 +62,7 @@ resource "openstack_compute_secgroup_v2" "secgroup_1" {
 # VM Única para tudo (App + DB via Docker Compose)
 resource "openstack_compute_instance_v2" "stack_instance" {
   name            = "theorganizer_stack"
-  image_id        = "45658166-3f45-47ef-9d1c-8d8cb4658a91"
+  image_id        = "25936459-8469-4eba-9f39-144ce8013807" # Imagem AMD64 correta!
   flavor_name     = "m1.small"
   security_groups = ["${openstack_compute_secgroup_v2.secgroup_1.name}"]
 
