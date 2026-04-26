@@ -89,7 +89,7 @@ resource "openstack_compute_instance_v2" "stack_instance" {
   EOF
 
   provisioner "local-exec" {
-    command = "echo '${self.access_ip_v4} theorganizer.com' | sudo tee -a /etc/hosts"
+    command = "sudo sed -i '/theorganizer.com/d' /etc/hosts && echo '${self.access_ip_v4} theorganizer.com' | sudo tee -a /etc/hosts"
   }
 }
 
