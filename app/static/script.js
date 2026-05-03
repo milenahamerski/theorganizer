@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000/books";
+const API_URL = "/books";
 
 async function fetchBooks() {
   const res = await fetch(API_URL);
