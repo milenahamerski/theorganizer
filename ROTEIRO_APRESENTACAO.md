@@ -1,62 +1,84 @@
-# 📑 ROTEIRO FINAL: Foco em Nuvem OpenStack e Infraestrutura
+# 📑 ROTEIRO FINAL: Arquitetura de Nuvem Privada (TheOrganizer)
 
-Este roteiro foi ajustado para dar ênfase total à gestão da Nuvem Privada, VMs, DNS e CA, conforme exigido no Trabalho 1.
+Este roteiro foca na explicação detalhada da infraestrutura utilizando o diagrama de fluxo de VMs.
 
 ---
 
-## 📊 Arquitetura da Nuvem (Diagrama Mermaid)
+## 📊 Arquitetura Detalhada da Solução
 
 ```mermaid
-graph TD
-    subgraph "Nuvem Privada OpenStack"
-        subgraph "Rede Privada (theorganizer_net)"
-            VM_WEB["VM Web (instance-web)<br/>FastAPI + Nginx"]
-            VM_DB["VM DB (instance-db)<br/>MariaDB 11.3"]
-        end
-        
-        DNS["Servidor DNS (BIND9)<br/>*.theorganizer.com.br"]
-        CA["Autoridade Certificadora<br/>SSL/HTTPS"]
+flowchart TD
+
+    subgraph LOCAL["💻 Máquina Local (Host)"]
+        USER["Usuário / Navegador"]
     end
-    
-    User((Cliente/Navegador)) -->|Acesso HTTPS| DNS
-    DNS -->|Resolve FQDN| VM_WEB
-    VM_WEB -->|Consulta SQL| VM_DB
-    CA -.->|Emite Certificados| VM_WEB
+
+    subgraph DOMAIN["🌐 VM: domain (DNS + CA)"]
+        DNS["Bind9 (DNS)"]
+        CA["Certificadora (Easy-RSA)"]
+    end
+
+    subgraph OPENSTACK["☁️ VM: openstack"]
+        DEVSTACK["DevStack (Nuvem Privada)"]
+        HORIZON["Horizon (Dashboard)"]
+        NETWORK["Rede (Neutron)"]
+        COMPUTE["Compute (Nova)"]
+    end
+
+    subgraph STACK["⚙️ VM: stack"]
+        TERRAFORM["Terraform (Orquestração)"]
+        
+        subgraph INSTANCIA_WEB["⚙️ VM instanciada no OpenStack"]
+            NGINX["Nginx (Proxy HTTPS)"]
+            DOCKER["Docker"]
+            FASTAPI["TheOrganizer (App)"]
+        end
+    end
+
+    %% Fluxos de Acesso
+    USER -->|1. Consulta DNS| DNS
+    DNS -->|2. Resolve p/ IP da Instância| NGINX
+    NGINX -->|3. Proxy Reverso| FASTAPI
+
+    %% Fluxo de Provisionamento
+    TERRAFORM -->|A. Provisiona via API| OPENSTACK
+    OPENSTACK --> NETWORK
+    OPENSTACK --> COMPUTE
+
+    %% Segurança
+    CA -->|B. Gera SSL| NGINX
+    CA -.->|C. Root CA| LOCAL
 ```
 
 ---
 
 ## 🎙️ Script Mastigado para a Gravação (7 a 12 min)
 
-### 1. Introdução e Empresa (Câmera no rosto) - [1:30 min]
-*   **FALA**: "Olá, professor Hermano. Eu sou a Milena Hamerski e vou apresentar o projeto **TheOrganizer**. Minha empresa fictícia foca em organização de acervos e o nosso domínio oficial é `theorganizer.com.br`."
-*   **FALA**: "O objetivo deste trabalho não é apenas o CRUD, mas a construção do zero de uma **Nuvem Privada OpenStack** para hospedar essa solução de forma profissional e isolada."
+### 1. Introdução e Visão Geral (Rosto na câmera) - [1:30 min]
+*   **FALA**: "Olá, professor. Sou a Milena e hoje vou apresentar a arquitetura de nuvem do **TheOrganizer**. Este projeto não é apenas uma aplicação, mas um ecossistema completo de nuvem privada que simula um ambiente de produção real."
+*   **FALA**: "Minha infraestrutura é composta por três máquinas virtuais de base e uma instância dinâmica criada dentro do OpenStack."
 
-### 2. Explicação da Topologia (Mostre o Diagrama) - [2:00 min]
-*   **AÇÃO**: Mostre o diagrama acima na tela.
-*   **FALA**: "Para que o professor entenda o fluxo, preparei este diagrama da nossa arquitetura. O cliente acessa nossa nuvem via HTTPS. A requisição passa primeiro pelo nosso servidor **BIND9**, que resolve o FQDN para o IP da nossa VM Web."
-*   **FALA**: "Dentro da nuvem OpenStack, temos uma rede privada isolada. A **instance-web** processa a lógica de negócio e se comunica com a **instance-db**, que está protegida e não aceita conexões externas, apenas da nossa rede interna."
-*   **FALA**: "Toda essa estrutura é validada pela nossa própria Autoridade Certificadora, que emitiu os certificados SSL que vocês veem no cadeado do navegador."
+### 2. Passo a Passo da Infraestrutura (Mostre o Diagrama) - [3:00 min]
+*   **AÇÃO**: Mostre o diagrama Mermaid na tela.
+*   **FALA**: "Vamos entender o fluxo por camadas:"
+*   **FALA**: "Primeiro, temos a **VM: domain**. Ela é o nosso cérebro de rede. Nela configurei o **Bind9** para o DNS e o **Easy-RSA** como nossa Autoridade Certificadora. Sem ela, o usuário não conseguiria resolver o domínio `theorganizer.com` nem ter acesso HTTPS seguro."
+*   **FALA**: "Em seguida, temos a **VM: openstack**. Aqui roda o DevStack, que nos fornece o Dashboard Horizon e os serviços de Compute e Network. É a nossa fundação de nuvem privada."
+*   **FALA**: "O grande diferencial está na **VM: stack**. Nela, utilizei o **Terraform** para orquestrar e provisionar automaticamente a nossa instância final dentro do OpenStack. Isso significa infraestrutura como código (IaC)."
 
-### 3. OpenStack e VMs (Mostre o Dashboard ou Terminal) - [2:30 min]
-*   **FALA**: "Seguindo a topologia ideal, criei um projeto na minha nuvem local. Configurei as redes virtuais e as regras de segurança (Security Groups) para isolar o tráfego."
-*   **AÇÃO**: Mostre a lista de instâncias ou o arquivo de configuração.
-*   **FALA**: "Instanciei duas máquinas virtuais principais: a **instance-web**, que recebe as requisições dos usuários, e a **instance-db**, que hospeda o MariaDB. Essa separação em instâncias distintas é fundamental para a segurança e escalabilidade do projeto."
+### 3. A Instância e a Segurança (Foco no Nginx/Docker) - [2:30 min]
+*   **FALA**: "Dentro da instância criada pelo Terraform, temos três camadas:"
+*   **FALA**: "1. O **Nginx**, que atua como Proxy Reverso e termina a conexão HTTPS usando os certificados da nossa CA."
+*   **FALA**: "2. O **Docker**, que isola a nossa aplicação do sistema operacional."
+*   **FALA**: "3. E o **TheOrganizer (FastAPI)**, que roda em um container, garantindo portabilidade."
 
-### 4. DNS e Autoridade Certificadora (Mostre arquivos do BIND/OpenSSL) - [2:30 min]
-*   **FALA**: "Para a resolução de nomes, configurei um servidor **BIND9**. Ele está gerenciando a zona `theorganizer.com.br`. Qualquer serviço sob este domínio, como o `cloud.theorganizer.com.br`, é resolvido internamente na nossa rede de nuvem."
-*   **FALA**: "Também atendi ao requisito de segurança criando minha própria **Autoridade Certificadora (CA)**. Gere certificados digitais para o domínio, garantindo que o acesso à nuvem seja feito via HTTPS, protegendo os dados dos nossos clientes."
+### 4. Demonstração Prática (Navegador e Terminal) - [3:00 min]
+*   **AÇÃO**: Mostre o site funcionando e depois dê um `multipass list` no terminal para mostrar as 3 VMs rodando.
+*   **FALA**: "Como vocês podem ver, ao acessar o domínio, o DNS resolve corretamente e o cadeado do SSL está ativo graças à nossa CA Root importada na máquina local."
+*   **FALA**: "O CRUD é totalmente funcional, salvando dados no MariaDB que também está orquestrado nesse ambiente."
 
-### 5. Demonstração da Aplicação (Navegador) - [2:00 min]
-*   **AÇÃO**: Mostre o site funcionando (CRUD).
-*   **FALA**: "A aplicação foi personalizada com o logotipo da TheOrganizer. É um sistema CRUD puro, sem módulos extras, focado na gestão de livros. Temos 5 campos: ID, Título, Autora, Ano e Capa."
-*   **FALA**: "A integração entre as VMs é feita de forma transparente. A aplicação na VM Web se conecta ao MariaDB na VM de banco de dados via rede privada."
-
-### 6. Diferencial Técnico (Nota Máxima) - [1:30 min]
-*   **FALA**: "Como diferencial, implementei a **Automação Completa de Schema e Healthchecks**. O banco de dados se auto-configura via script `init.sql` no momento da criação da instância. Além disso, a aplicação web possui um monitor de saúde que aguarda o banco estar pronto antes de subir o serviço, garantindo alta disponibilidade desde o primeiro segundo."
-
-### 7. Conclusão - [0:30 min]
-*   **FALA**: "O projeto TheOrganizer demonstra minha capacidade de planejar redes, gerenciar identidades SSL, configurar DNS e orquestrar uma nuvem privada do zero. Obrigado!"
+### 5. Conclusão e Diferencial - [1:00 min]
+*   **FALA**: "O diferencial deste projeto é o uso de **Terraform para orquestração automática no OpenStack** e a implementação de uma **CA própria com Easy-RSA**. Isso eleva o projeto de um simples site para uma solução completa de infraestrutura."
+*   **FALA**: "Obrigado e estou à disposição para perguntas!"
 
 ---
 
