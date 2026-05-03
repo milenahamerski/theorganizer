@@ -104,11 +104,5 @@ Se preferir rodar toda a stack (App + Banco) rapidamente:
 docker-compose up -d
 ```
 
----
 
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
-Desenvolvido com ❤️ por [Milena Hamerski](https://github.com/milenahamerski)
+Desenvolvido por [Milena Hamerski](https://github.com/milenahamerski)
