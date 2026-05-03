@@ -152,9 +152,55 @@ button:hover {
 
 .book-card img {
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
+}
+
+.card-image-container {
+  position: relative;
+  height: 200px;
   background-color: var(--soft-mint);
+  overflow: hidden;
+}
+
+.no-image {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--soft-lilac);
+}
+
+.edit-icon-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--white);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.book-card:hover .edit-icon-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.edit-icon-btn:hover {
+  transform: scale(1.1) !important;
+  background: var(--primary-pink);
+  color: white;
 }
 
 .book-card-content {
@@ -189,7 +235,7 @@ button:hover {
 }
 
 .modal-content {
-  margin: 10% auto;
+  margin: 5% auto;
   max-width: 500px;
   position: relative;
   animation: slideUp 0.4s ease;
@@ -212,43 +258,24 @@ button:hover {
 .card-actions {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
-}
-
-.edit-btn {
-  background: #f0ebff;
-  color: #7b2cbf;
-  padding: 8px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  transition: background 0.3s;
-  flex: 1;
-}
-
-.edit-btn:hover {
-  background: #e0d6ff;
+  margin-top: 5px;
 }
 
 .delete-btn {
   flex: 1;
-  margin-top: 0;
-  background: #ffebf0;
+  background: transparent;
   color: #ff4d6d;
   padding: 8px;
   border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
-  border: none;
-  transition: background 0.3s;
-  box-shadow: none;
+  border: 1px solid #ffebf0;
+  transition: all 0.3s;
 }
 
 .delete-btn:hover {
-  background: #ffcfd9;
+  background: #ffebf0;
 }
 
 @keyframes fadeIn {
@@ -269,4 +296,5 @@ button:hover {
 @media (max-width: 600px) {
   #book-form, #edit-book-form { grid-template-columns: 1fr; }
   button { grid-column: span 1; }
+  .edit-icon-btn { opacity: 1; transform: none; }
 }

@@ -9,19 +9,21 @@ async function fetchBooks() {
     const div = document.createElement("div");
     div.className = "book-card";
     div.innerHTML = `
-            ${
-              book.image_url
-                ? `<img src="${book.image_url}" alt="${book.title}">`
-                : '<div style="height:180px; background:#f0f0f0; display:flex; align-items:center; justify-content:center; color:#ccc;">📖</div>'
-            }
+            <div class="card-image-container">
+              ${
+                book.image_url
+                  ? `<img src="${book.image_url}" alt="${book.title}">`
+                  : '<div class="no-image">📖</div>'
+              }
+              <button class="edit-icon-btn" onclick="openEditModal(${JSON.stringify(
+                book
+              ).replace(/"/g, "&quot;")})">✏️</button>
+            </div>
             <div class="book-card-content">
               <h3>${book.title}</h3>
               <p><strong>Autora:</strong> ${book.author}</p>
               <p><strong>Ano:</strong> ${book.year || "N/D"}</p>
               <div class="card-actions">
-                <button class="edit-btn" onclick="openEditModal(${JSON.stringify(
-                  book
-                ).replace(/"/g, "&quot;")})">Editar ✏️</button>
                 <button class="delete-btn" onclick="deleteBook(${
                   book.id
                 })">Excluir 🗑️</button>
