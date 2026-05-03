@@ -174,8 +174,67 @@ button:hover {
   color: #8e82b4;
 }
 
-.delete-btn {
+/* Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(94, 84, 142, 0.4);
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  margin: 10% auto;
+  max-width: 500px;
+  position: relative;
+  animation: slideUp 0.4s ease;
+}
+
+.close-modal {
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--soft-lilac);
+  transition: color 0.3s;
+}
+
+.close-modal:hover {
+  color: var(--primary-pink);
+}
+
+.card-actions {
+  display: flex;
+  gap: 10px;
   margin-top: 10px;
+}
+
+.edit-btn {
+  background: #f0ebff;
+  color: #7b2cbf;
+  padding: 8px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s;
+  flex: 1;
+}
+
+.edit-btn:hover {
+  background: #e0d6ff;
+}
+
+.delete-btn {
+  flex: 1;
+  margin-top: 0;
   background: #ffebf0;
   color: #ff4d6d;
   padding: 8px;
@@ -186,12 +245,20 @@ button:hover {
   border: none;
   transition: background 0.3s;
   box-shadow: none;
-  grid-column: auto;
 }
 
 .delete-btn:hover {
   background: #ffcfd9;
-  transform: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes fadeInDown {
@@ -200,6 +267,6 @@ button:hover {
 }
 
 @media (max-width: 600px) {
-  #book-form { grid-template-columns: 1fr; }
+  #book-form, #edit-book-form { grid-template-columns: 1fr; }
   button { grid-column: span 1; }
 }

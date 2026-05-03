@@ -33,6 +33,22 @@
       </section>
     </main>
 
+    <!-- Modal de Edição -->
+    <div id="edit-modal" class="modal">
+      <div class="modal-content section-card">
+        <span class="close-modal" onclick="closeEditModal()">&times;</span>
+        <h2>Editar meu tesouro ✏️</h2>
+        <form id="edit-book-form">
+          <input type="hidden" id="edit-id" />
+          <input type="text" id="edit-title" placeholder="Título do livro" required />
+          <input type="text" id="edit-author" placeholder="Nome da autora" required />
+          <input type="number" id="edit-year" placeholder="Ano de lançamento" />
+          <input type="text" id="edit-image_url" placeholder="URL da capa" />
+          <button type="submit">Salvar alterações ✨</button>
+        </form>
+      </div>
+    </div>
+
     <script src="/static/script.js"></script>
   </body>
 </html>
